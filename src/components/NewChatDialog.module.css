@@ -1,0 +1,79 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 45%);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 25%);
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.input {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+}
+
+.input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue);
+}
+
+.error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancel,
+.create {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.cancel {
+  background: transparent;
+  color: var(--blue);
+}
+
+.create {
+  background: var(--blue);
+  color: #fff;
+}
+
+.create:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
