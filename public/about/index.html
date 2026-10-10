@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Telegram-чат на GREEN-API · О проекте</title>
+    <meta
+      name="description"
+      content="Веб-чат для отправки и получения текстовых сообщений Telegram через GREEN-API. React + TypeScript. Демо-видео, скриншоты и инструкция."
+    />
+    <meta name="theme-color" content="#3390ec" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Telegram-чат на GREEN-API" />
+    <meta property="og:description" content="Отправка и получение текстовых сообщений Telegram через GREEN-API. React + TypeScript." />
+    <meta property="og:url" content="https://greenchat.p1gog.duckdns.org/about/" />
+    <meta property="og:image" content="https://greenchat.p1gog.duckdns.org/about/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        --blue: #3390ec;
+        --blue-dark: #2b7fd1;
+        --bg: #f4f6f9;
+        --card: #fff;
+        --text: #17212b;
+        --dim: #6b7785;
+        --border: #dfe3e8;
+        --code: #eef2f6;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1621;
+          --card: #17212b;
+          --text: #e8eef4;
+          --dim: #8b9aab;
+          --border: #263341;
+          --code: #0e1621;
+          color-scheme: dark;
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 17px/1.6 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+      a { color: var(--blue); }
+      .wrap { max-width: 1040px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)); }
+
+      .hero {
+        padding: 56px 0 44px;
+        color: #fff;
+        text-align: center;
+        background: linear-gradient(160deg, #6fb1fc 0%, #4364f7 100%);
+      }
+      .hero img { width: 84px; height: 84px; }
+      .hero h1 { margin: 16px 0 8px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; }
+      .hero p { max-width: 640px; margin: 0 auto; font-size: 18px; opacity: 0.95; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+      .btn {
+        display: inline-block;
+        padding: 12px 22px;
+        border-radius: 12px;
+        background: #fff;
+        color: #2b5fd6;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .btn.ghost { background: rgb(255 255 255 / 18%); color: #fff; }
+      .btn:hover { filter: brightness(0.96); }
+
+      section { padding: 44px 0 8px; }
+      h2 { margin: 0 0 18px; font-size: 26px; line-height: 1.2; }
+      .lead { margin: 0 0 22px; color: var(--dim); }
+
+      .video {
+        width: 100%;
+        border-radius: 14px;
+        background: #000;
+        box-shadow: 0 10px 40px rgb(0 0 0 / 18%);
+      }
+
+      .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+      .gallery figure { margin: 0; }
+      .gallery img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--card);
+      }
+      figcaption { margin-top: 8px; color: var(--dim); font-size: 14px; text-align: center; }
+      .gallery .wide { grid-column: 1 / -1; }
+      .phones { display: flex; gap: 18px; justify-content: center; grid-column: 1 / -1; }
+      .phones figure { flex: 0 1 260px; }
+
+      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
+      .steps li {
+        position: relative;
+        padding: 18px 16px 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--card);
+        counter-increment: s;
+      }
+      .steps li::before {
+        content: counter(s);
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        margin-bottom: 10px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .steps b { display: block; margin-bottom: 4px; }
+      .steps span { color: var(--dim); font-size: 15px; }
+      code {
+        padding: 1px 6px;
+        border-radius: 6px;
+        background: var(--code);
+        font: 0.88em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
+      th, td { padding: 11px 14px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; font-size: 15.5px; }
+      th { background: var(--code); font-size: 14px; color: var(--dim); }
+      tr:last-child td { border-bottom: 0; }
+      td:first-child { width: 42%; }
+      .ok { color: #2e9e4f; font-weight: 700; white-space: nowrap; }
+
+      .stack { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+      .stack li { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--card); font-size: 15px; }
+
+      .cta { margin: 44px 0 0; padding: 28px 0; border-top: 1px solid var(--border); text-align: center; color: var(--dim); font-size: 15px; }
+      .cta .actions { margin: 0 0 16px; }
+      .cta .btn { background: var(--blue); color: #fff; }
+      .cta .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--blue); }
+
+      @media (max-width: 820px) {
+        .steps { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 620px) {
+        body { font-size: 16px; }
+        .hero { padding: 40px 0 32px; }
+        .gallery { grid-template-columns: 1fr; }
+        .phones { gap: 10px; }
+        .steps { grid-template-columns: 1fr; }
+        td:first-child { width: auto; }
+        th, td { padding: 9px 10px; font-size: 14.5px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <img src="/favicon.svg" alt="" width="84" height="84" />
+        <h1>Telegram-чат на GREEN-API</h1>
+        <p>
+          Интерфейс в духе Telegram Web для отправки и получения текстовых сообщений через
+          GREEN-API. React&nbsp;+&nbsp;TypeScript, без бэкенда.
+        </p>
+        <div class="actions">
+          <a class="btn" href="/">Открыть чат</a>
+          <a class="btn ghost" href="https://github.com/budapesht6666/green-api-app">Исходный код</a>
+          <a class="btn ghost" href="https://github.com/budapesht6666/green-api-app/blob/main/docs/local-setup.md">Запуск локально</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section>
+        <h2>Демо за 25 секунд</h2>
+        <p class="lead">Вход, новый чат по номеру, отправка сообщения и ответ получателя, который приходит без перезагрузки. На записи вымышленные данные.</p>
+        <video class="video" controls preload="metadata" poster="media/poster.jpg" playsinline>
+          <source src="media/demo.mp4" type="video/mp4" />
+          Ваш браузер не воспроизводит видео. <a href="media/demo.mp4">Скачать ролик</a>.
+        </video>
+      </section>
+
+      <section>
+        <h2>Как выглядит</h2>
+        <div class="gallery">
+          <figure class="wide">
+            <img src="media/shot-chat.webp" width="1600" height="900" loading="lazy" alt="Чат: список слева, переписка справа" />
+            <figcaption>Список чатов слева, переписка справа. Статусы: ✓ отправлено, ✓✓ доставлено, синие ✓✓ прочитано</figcaption>
+          </figure>
+          <figure>
+            <img src="media/shot-login.webp" width="1200" height="675" loading="lazy" alt="Экран входа" />
+            <figcaption>Вход по idInstance и apiTokenInstance</figcaption>
+          </figure>
+          <figure>
+            <img src="media/shot-new-chat.webp" width="1200" height="675" loading="lazy" alt="Диалог нового чата" />
+            <figcaption>Новый чат по номеру телефона (или @username)</figcaption>
+          </figure>
+          <div class="phones">
+            <figure>
+              <img src="media/shot-mobile-list.webp" width="600" height="1300" loading="lazy" alt="Мобильный вид: список чатов" />
+              <figcaption>На телефоне: список чатов</figcaption>
+            </figure>
+            <figure>
+              <img src="media/shot-mobile-chat.webp" width="600" height="1300" loading="lazy" alt="Мобильный вид: переписка" />
+              <figcaption>…и переписка отдельным экраном</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Как это работает</h2>
+        <p class="lead">Бэкенда нет: браузер обращается к GREEN-API напрямую.</p>
+        <ol class="steps">
+          <li><b>Вход</b><span><code>getStateInstance</code> проверяет, что инстанс авторизован.</span></li>
+          <li><b>Новый чат</b><span>В Telegram chatId ≠ номер: <code>checkAccount</code> превращает номер в chatId.</span></li>
+          <li><b>Отправка</b><span><code>sendMessage</code> с chatId и текстом, галочки обновляются по статусам.</span></li>
+          <li><b>Ответ</b><span><code>receiveNotification</code> (long polling) → обработка → <code>deleteNotification</code>.</span></li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Соответствие заданию</h2>
+        <table>
+          <thead><tr><th>Требование</th><th>Как сделано</th></tr></thead>
+          <tbody>
+            <tr><td>React</td><td><span class="ok">✓</span> React 19 + TypeScript (strict)</td></tr>
+            <tr><td>Сервис GREEN-API (Telegram)</td><td><span class="ok">✓</span> документация Telegram-версии: хост инстанса, chatId через CheckAccount</td></tr>
+            <tr><td>Только текстовые сообщения</td><td><span class="ok">✓</span> прочие типы игнорируются, но удаляются из очереди</td></tr>
+            <tr><td>Внешний вид как у Telegram</td><td><span class="ok">✓</span> список чатов, пузыри, время, галочки, цвета Telegram Web</td></tr>
+            <tr><td>Максимально простой интерфейс</td><td><span class="ok">✓</span> три экрана: вход, список чатов, переписка</td></tr>
+            <tr><td>Отправка — SendMessage</td><td><span class="ok">✓</span> <code>POST …/sendMessage/{token}</code></td></tr>
+            <tr><td>Получение — HTTP API</td><td><span class="ok">✓</span> <code>ReceiveNotification</code> + <code>DeleteNotification</code></td></tr>
+            <tr><td>Вход по idInstance и apiTokenInstance</td><td><span class="ok">✓</span> данные хранятся только в sessionStorage вкладки</td></tr>
+            <tr><td>Новый чат по номеру телефона</td><td><span class="ok">✓</span> запасной вариант: <code>@username</code>, если номер скрыт настройками приватности</td></tr>
+            <tr><td>Ответ получателя виден в чате</td><td><span class="ok">✓</span> приходит без перезагрузки, дубликаты отсекаются по idMessage</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Детали</h2>
+        <ul class="stack">
+          <li>React 19</li>
+          <li>TypeScript strict</li>
+          <li>Vite</li>
+          <li>CSS Modules</li>
+          <li>Vitest + Testing Library (41 тест)</li>
+          <li>Мобильная адаптивность</li>
+          <li>Автоскролл «как в мессенджерах»</li>
+        </ul>
+      </section>
+
+      <div class="cta">
+        <div class="actions">
+          <a class="btn" href="/">Открыть чат</a>
+          <a class="btn ghost" href="https://github.com/budapesht6666/green-api-app/blob/main/docs/local-setup.md">Инструкция по запуску</a>
+          <a class="btn ghost" href="https://github.com/budapesht6666/green-api-app">GitHub</a>
+        </div>
+        Для проверки нужен свой инстанс GREEN-API (тариф «Разработчик» бесплатный): как его создать — в инструкции.
+      </div>
+    </main>
+  </body>
+</html>

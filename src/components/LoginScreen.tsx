@@ -95,6 +95,10 @@ export function LoginScreen({ onLogin }: Props) {
         <button className={styles.submit} type="submit" disabled={loading}>
           {loading ? 'Проверяем…' : 'Войти'}
         </button>
+
+        <a className={styles.about} href="/about/">
+          О проекте и инструкция по запуску
+        </a>
       </form>
     </main>
   );

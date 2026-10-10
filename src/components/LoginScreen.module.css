@@ -89,3 +89,9 @@
   opacity: 0.7;
   cursor: default;
 }
+
+.about {
+  align-self: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}

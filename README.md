@@ -2,6 +2,10 @@
 
 Веб-интерфейс для отправки и получения текстовых сообщений Telegram через [GREEN-API](https://green-api.com/telegram). React 19 + TypeScript + Vite.
 
+- **Приложение онлайн:** https://greenchat.p1gog.duckdns.org
+- **О проекте (демо-видео, скриншоты):** https://greenchat.p1gog.duckdns.org/about/
+- **Инструкция по локальному запуску:** [docs/local-setup.md](docs/local-setup.md)
+
 ## Как попробовать
 
 1. В [личном кабинете GREEN-API](https://console.green-api.com) создайте Telegram-инстанс (тариф «Разработчик» бесплатный) и авторизуйте его: Telegram → Настройки → Устройства → Подключить устройство, затем «Получить QR» у инстанса.
@@ -33,3 +37,5 @@ npm test           # Vitest
 npm run lint
 npm run build      # tsc + vite build → dist/
 ```
+
+Подробная инструкция (включая создание инстанса GREEN-API) — в [docs/local-setup.md](docs/local-setup.md).
