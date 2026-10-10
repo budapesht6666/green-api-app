@@ -2,6 +2,8 @@
 export interface Credentials {
   idInstance: string;
   apiTokenInstance: string;
+  /** Хост инстанса из кабинета; если не задан, выводится из idInstance (см. apiUrlFor). */
+  apiUrl?: string;
 }
 
 export type InstanceState =

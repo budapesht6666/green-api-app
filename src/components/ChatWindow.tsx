@@ -12,11 +12,12 @@ interface Props {
   chat: Chat | null;
   messages: ChatMessage[];
   onSend: (text: string) => void;
+  onRetry: (message: ChatMessage) => void;
   onBack: () => void;
   onNewChat: () => void;
 }
 
-export function ChatWindow({ chat, messages, onSend, onBack, onNewChat }: Props) {
+export function ChatWindow({ chat, messages, onSend, onRetry, onBack, onNewChat }: Props) {
   const [draft, setDraft] = useState('');
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -78,7 +79,7 @@ export function ChatWindow({ chat, messages, onSend, onBack, onNewChat }: Props)
         {messages.length === 0 ? (
           <div className={styles.empty}>Сообщений пока нет. Напишите первым.</div>
         ) : (
-          messages.map((message) => <MessageBubble key={message.id} message={message} />)
+          messages.map((message) => <MessageBubble key={message.id} message={message} onRetry={onRetry} />)
         )}
       </div>
 

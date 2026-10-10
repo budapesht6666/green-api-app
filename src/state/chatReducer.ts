@@ -39,10 +39,20 @@ export const initialChatState: ChatState = {
   activeChatId: null,
 };
 
+/** Префикс временного id сообщения, пока GREEN-API не вернул настоящий idMessage. */
+export const LOCAL_ID_PREFIX = 'local-';
+
+/**
+ * Повторить можно только сообщение, чей запрос SendMessage не удался (id ещё временный).
+ * Если сообщение принято, но не доставлено (статус failed/noAccount), повтор породил бы дубль.
+ */
+export const isRetryable = (m: ChatMessage): boolean => m.status === 'failed' && m.id.startsWith(LOCAL_ID_PREFIX);
+
 export type ChatAction =
   | { type: 'chatOpened'; chat: Chat }
   | { type: 'chatSelected'; chatId: string }
   | { type: 'messageQueued'; chatId: string; tempId: string; text: string; timestamp: number }
+  | { type: 'messageRetry'; chatId: string; tempId: string }
   | { type: 'messageSent'; chatId: string; tempId: string; idMessage: string }
   | { type: 'messageFailed'; chatId: string; tempId: string; error: string }
   | { type: 'notification'; body: NotificationBody };
@@ -82,6 +92,11 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
         timestamp: action.timestamp,
         status: 'sending',
       });
+
+    case 'messageRetry':
+      return updateMessage(state, action.chatId, action.tempId, (m) =>
+        isRetryable(m) ? { ...m, status: 'sending', error: undefined } : m,
+      );
 
     case 'messageSent': {
       const list = state.messages[action.chatId] ?? [];

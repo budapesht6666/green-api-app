@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MessageNotification, StatusNotification } from '../api/types';
-import { chatReducer, initialChatState, type ChatState } from './chatReducer';
+import { chatReducer, initialChatState, isRetryable, type ChatState } from './chatReducer';
 
 const CHAT = '10000000';
 
@@ -77,6 +77,24 @@ describe('chatReducer: отправка', () => {
   it('помечает ошибку отправки', () => {
     const failed = chatReducer(queued, { type: 'messageFailed', chatId: CHAT, tempId: 'local-1', error: 'ой' });
     expect(failed.messages[CHAT]).toMatchObject([{ status: 'failed', error: 'ой' }]);
+  });
+
+  it('повтор возвращает неудавшееся сообщение в «отправляется» и убирает ошибку', () => {
+    const failed = chatReducer(queued, { type: 'messageFailed', chatId: CHAT, tempId: 'local-1', error: 'ой' });
+    const retried = chatReducer(failed, { type: 'messageRetry', chatId: CHAT, tempId: 'local-1' });
+    expect(retried.messages[CHAT]).toHaveLength(1);
+    expect(retried.messages[CHAT]?.[0]).toMatchObject({ id: 'local-1', status: 'sending', text: 'Привет' });
+    expect(retried.messages[CHAT]?.[0]?.error).toBeUndefined();
+  });
+
+  it('повтор не трогает принятое сообщение: иначе вышел бы дубль', () => {
+    const sent = chatReducer(queued, { type: 'messageSent', chatId: CHAT, tempId: 'local-1', idMessage: 'srv-1' });
+    const undelivered = notify(sent, {
+      typeWebhook: 'outgoingMessageStatus', chatId: CHAT, idMessage: 'srv-1', status: 'failed',
+    });
+    const after = chatReducer(undelivered, { type: 'messageRetry', chatId: CHAT, tempId: 'srv-1' });
+    expect(after).toEqual(undelivered);
+    expect(isRetryable(undelivered.messages[CHAT]![0]!)).toBe(false);
   });
 });
 

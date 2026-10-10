@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { createClient } from '../api/client';
+import { createClient, normalizeApiUrl } from '../api/client';
 import { GreenApiError } from '../api/errors';
 import type { Credentials, InstanceState } from '../api/types';
 import { TelegramLogo } from './icons';
@@ -20,12 +20,13 @@ interface Props {
 export function LoginScreen({ onLogin }: Props) {
   const [idInstance, setIdInstance] = useState('');
   const [apiTokenInstance, setApiTokenInstance] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const credentials = { idInstance: idInstance.trim(), apiTokenInstance: apiTokenInstance.trim() };
+    const credentials: Credentials = { idInstance: idInstance.trim(), apiTokenInstance: apiTokenInstance.trim() };
 
     if (!/^\d+$/.test(credentials.idInstance)) {
       setError('idInstance — это число, например 4100000000.');
@@ -34,6 +35,14 @@ export function LoginScreen({ onLogin }: Props) {
     if (!credentials.apiTokenInstance) {
       setError('Введите apiTokenInstance.');
       return;
+    }
+    if (apiUrl.trim()) {
+      const normalized = normalizeApiUrl(apiUrl);
+      if (!normalized) {
+        setError('apiUrl должен быть https-адресом, например https://4100.api.green-api.com.');
+        return;
+      }
+      credentials.apiUrl = normalized;
     }
 
     setError(null);
@@ -85,6 +94,21 @@ export function LoginScreen({ onLogin }: Props) {
             autoComplete="off"
           />
         </label>
+
+        <details className={styles.advanced}>
+          <summary>Свой адрес API (необязательно)</summary>
+          <label className={styles.field}>
+            <span>apiUrl</span>
+            <input
+              value={apiUrl}
+              onChange={(e) => setApiUrl(e.target.value)}
+              type="url"
+              inputMode="url"
+              placeholder="по умолчанию — по первым цифрам idInstance"
+              autoComplete="off"
+            />
+          </label>
+        </details>
 
         {error && (
           <p className={styles.error} role="alert">

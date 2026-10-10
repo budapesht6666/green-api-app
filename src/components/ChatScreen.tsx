@@ -3,7 +3,7 @@ import { createClient } from '../api/client';
 import { GreenApiError } from '../api/errors';
 import type { Credentials } from '../api/types';
 import { useNotifications } from '../hooks/useNotifications';
-import { chatReducer, type Chat } from '../state/chatReducer';
+import { chatReducer, isRetryable, LOCAL_ID_PREFIX, type Chat, type ChatMessage } from '../state/chatReducer';
 import { loadHistory, saveHistory } from '../state/storage';
 import styles from './ChatScreen.module.css';
 import { ChatWindow } from './ChatWindow';
@@ -26,10 +26,8 @@ export function ChatScreen({ credentials, onLogout }: Props) {
     saveHistory(credentials.idInstance, state);
   }, [credentials.idInstance, state]);
 
-  const sendMessage = useCallback(
-    async (chatId: string, text: string) => {
-      const tempId = `local-${crypto.randomUUID()}`;
-      dispatch({ type: 'messageQueued', chatId, tempId, text, timestamp: Date.now() });
+  const deliver = useCallback(
+    async (chatId: string, tempId: string, text: string) => {
       try {
         const { idMessage } = await client.sendMessage(chatId, text);
         dispatch({ type: 'messageSent', chatId, tempId, idMessage });
@@ -40,6 +38,18 @@ export function ChatScreen({ credentials, onLogout }: Props) {
     },
     [client],
   );
+
+  const sendMessage = (chatId: string, text: string) => {
+    const tempId = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
+    dispatch({ type: 'messageQueued', chatId, tempId, text, timestamp: Date.now() });
+    return deliver(chatId, tempId, text);
+  };
+
+  const retryMessage = (chatId: string, message: ChatMessage) => {
+    if (!isRetryable(message)) return;
+    dispatch({ type: 'messageRetry', chatId, tempId: message.id });
+    return deliver(chatId, message.id, message.text);
+  };
 
   const openChat = (chat: Chat) => {
     dispatch({ type: 'chatOpened', chat });
@@ -71,13 +81,19 @@ export function ChatScreen({ credentials, onLogout }: Props) {
           chat={activeChat}
           messages={activeChat ? (state.messages[activeChat.chatId] ?? []) : []}
           onSend={(text) => activeChat && sendMessage(activeChat.chatId, text)}
+          onRetry={(message) => activeChat && retryMessage(activeChat.chatId, message)}
           onBack={() => dispatch({ type: 'chatSelected', chatId: '' })}
           onNewChat={() => setNewChatOpen(true)}
         />
       </section>
 
       {newChatOpen && (
-        <NewChatDialog client={client} onCreate={openChat} onClose={() => setNewChatOpen(false)} />
+        <NewChatDialog
+          client={client}
+          chats={state.chats}
+          onCreate={openChat}
+          onClose={() => setNewChatOpen(false)}
+        />
       )}
     </div>
   );

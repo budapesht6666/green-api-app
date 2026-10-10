@@ -2,12 +2,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { GreenApiClient } from '../api/client';
+import type { Chat } from '../state/chatReducer';
 import { NewChatDialog } from './NewChatDialog';
 
-const setup = (checkAccount: GreenApiClient['checkAccount']) => {
+const setup = (checkAccount: GreenApiClient['checkAccount'], chats: Chat[] = []) => {
   const onCreate = vi.fn();
   const client = { checkAccount } as GreenApiClient;
-  render(<NewChatDialog client={client} onCreate={onCreate} onClose={vi.fn()} />);
+  render(<NewChatDialog client={client} chats={chats} onCreate={onCreate} onClose={vi.fn()} />);
   return { onCreate, user: userEvent.setup() };
 };
 
@@ -43,6 +44,28 @@ describe('NewChatDialog', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('нет Telegram');
     expect(onCreate).not.toHaveBeenCalled();
+  });
+
+  it('известный номер открывает существующий чат без CheckAccount', async () => {
+    const existing: Chat = { chatId: '688534819', title: '@dorozhkin_pv', phone: '+79040401038' };
+    const checkAccount = vi.fn();
+    const { onCreate, user } = setup(checkAccount, [existing]);
+
+    await submit(user, '+7 904 040-10-38');
+
+    expect(checkAccount).not.toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(existing);
+  });
+
+  it('известный @username тоже не тратит CheckAccount', async () => {
+    const existing: Chat = { chatId: '688534819', title: '@dorozhkin_pv' };
+    const checkAccount = vi.fn();
+    const { onCreate, user } = setup(checkAccount, [existing]);
+
+    await submit(user, '@Dorozhkin_PV');
+
+    expect(checkAccount).not.toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(existing);
   });
 
   it('некорректный ввод не уходит в API', async () => {

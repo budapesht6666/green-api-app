@@ -67,6 +67,21 @@
   font-size: 12px;
 }
 
+.retry {
+  margin-left: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 760px) {
   .bubble {
     max-width: 85%;

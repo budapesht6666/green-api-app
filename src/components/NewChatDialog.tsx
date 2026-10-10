@@ -7,11 +7,13 @@ import styles from './NewChatDialog.module.css';
 
 interface Props {
   client: GreenApiClient;
+  /** Уже созданные чаты: повторный ввод того же номера не должен тратить квоту CheckAccount. */
+  chats: Chat[];
   onCreate: (chat: Chat) => void;
   onClose: () => void;
 }
 
-export function NewChatDialog({ client, onCreate, onClose }: Props) {
+export function NewChatDialog({ client, chats, onCreate, onClose }: Props) {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,16 @@ export function NewChatDialog({ client, onCreate, onClose }: Props) {
     const username = phoneNumber === null ? normalizeUsername(phone) : null;
     if (phoneNumber === null && username === null) {
       setError('Введите номер в международном формате (+7 999 888-77-66) или @username.');
+      return;
+    }
+
+    const known = chats.find((chat) =>
+      phoneNumber !== null
+        ? chat.phone === formatPhone(phoneNumber)
+        : chat.title.toLowerCase() === username!.toLowerCase(),
+    );
+    if (known) {
+      onCreate(known);
       return;
     }
 

@@ -1,5 +1,5 @@
 import { formatTime } from '../lib/format';
-import type { ChatMessage } from '../state/chatReducer';
+import { isRetryable, type ChatMessage } from '../state/chatReducer';
 import { CheckIcon, ClockIcon, DoubleCheckIcon } from './icons';
 import styles from './MessageBubble.module.css';
 
@@ -26,7 +26,12 @@ const STATUS_LABELS: Record<ChatMessage['status'], string> = {
   failed: 'Не отправлено',
 };
 
-export function MessageBubble({ message }: { message: ChatMessage }) {
+interface Props {
+  message: ChatMessage;
+  onRetry: (message: ChatMessage) => void;
+}
+
+export function MessageBubble({ message, onRetry }: Props) {
   const { outgoing, status } = message;
   return (
     <div className={`${styles.row} ${outgoing ? styles.out : styles.in}`}>
@@ -43,6 +48,11 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
         {message.error && (
           <div className={styles.error} role="alert">
             {message.error}
+            {isRetryable(message) && (
+              <button className={styles.retry} type="button" onClick={() => onRetry(message)}>
+                Повторить
+              </button>
+            )}
           </div>
         )}
       </div>
